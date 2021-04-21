@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Salary report{% endblock %}
+
+{% block body %}
+<main>
+    <h1>Employee salary report for {{ date().format('m/Y') }}</h1>
+
+    <form action="?" method="get">
+        <label>First name: <input name="firstName"></label>
+        <label>Last name: <input name="lastName"></label>
+        {% if departments|length > 1 %}
+        <select name="department">
+        {% for department in departments %}
+            <option value="{{ department.id }}">{{ department.name }}</option>
+        {% endfor %}
+        </select>
+        {% endif %}
+        <input type="submit" value="Filter">
+    </form>
+
+    <table cellspacing="0">
+        <tr>
+            <th>
+                <a href="?_orderBy[lastName]={{ orderedBy.lastName is defined and orderedBy.lastName == 'asc' ? 'desc' : 'asc' }}">
+                    Name
+                </a>
+            </th>
+            <th>
+                <a href="?_orderBy[department]={{ orderedBy.department is defined and orderedBy.department == 'asc' ? 'desc' : 'asc' }}">
+                Department
+                </a>
+            </th>
+            <th>
+                <a href="?_orderBy[baseSalary]={{ orderedBy.baseSalary is defined and orderedBy.baseSalary == 'asc' ? 'desc' : 'asc' }}">
+                Base salary
+                </a>
+            </th>
+            <th>
+                <a href="?_orderBy[bonus]={{ orderedBy.bonus is defined and orderedBy.bonus == 'asc' ? 'desc' : 'asc' }}">
+                Bonus amount
+                </a>
+            </th>
+            <th>
+                <a href="?_orderBy[bonusType]={{ orderedBy.bonusType is defined and orderedBy.bonusType == 'asc' ? 'desc' : 'asc' }}">
+                Bonus type
+                </a>
+            </th>
+            <th>
+                <a href="?_orderBy[totalSalary]={{ orderedBy.totalSalary is defined and orderedBy.totalSalary == 'asc' ? 'desc' : 'asc' }}">
+                Total salary
+                </a>
+            </th>
+        </tr>
+    {% for employee in employees %}
+        <tr>
+            <td>
+                {{ employee.firstName }} {{ employee.lastName }}
+            </td>
+            <td class="center">
+                {{ employee.department.name }}
+            </td>
+            <td class="right">
+                {{ employee.baseSalary }}
+            </td>
+            <td class="right">
+                {{ employee.bonus }}
+            </td>
+            <td>
+                {% if employee.bonusType == 'seniority' %}
+                    seniority increment
+                    <small>({{ '$%.2f' | format(employee.department.seniorityIncrementBonus / 100) }} per year)</small>
+                {% elseif employee.bonusType == 'percent' %}
+                    percent bonus
+                    <small>({{ '%.1f%%' | format(employee.department.percentBonus) }})</small>
+                {% endif %}
+            </td>
+            <td class="right">
+                {{ employee.totalSalary }}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+</main>
+{% endblock %}

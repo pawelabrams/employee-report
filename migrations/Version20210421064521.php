@@ -16,14 +16,14 @@ final class Version20210419000000 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        $this->addSql('CREATE TABLE department (
+        $this->addSql('CREATE TABLE IF NOT EXISTS department (
             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             name VARCHAR(255) NOT NULL,
             seniority_increment_bonus INTEGER DEFAULT NULL,
             percent_bonus DOUBLE PRECISION DEFAULT NULL,
             CHECK(seniority_increment_bonus IS NULL OR percent_bonus IS NULL)
         )');
-        $this->addSql('CREATE TABLE employee (
+        $this->addSql('CREATE TABLE IF NOT EXISTS employee (
             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             department_id INTEGER DEFAULT NULL,
             first_name VARCHAR(255) NOT NULL,

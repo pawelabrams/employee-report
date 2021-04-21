@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+            <style>
+                * { box-sizing: border-box; }
+
+                html, body {
+                    margin: 0; padding: 0;
+                    font-family: sans-serif;
+                }
+
+                main {
+                    max-width: 95%;
+                    margin: 0 auto;
+                }
+
+                table {
+                    width: 100%;
+                }
+
+                tr td, tr th {
+                    border-bottom: 1px solid #666;
+                }
+                tr th {
+                    border-top: 1px solid #666;
+                }
+
+                tr > :first-child {
+                    border-left: 1px solid #666;
+                }
+
+                tr > :last-child {
+                    border-right: 1px solid #666;
+                }
+
+                tr:nth-child(2n) {
+                    background-color: #fafafa;
+                }
+
+                tr:nth-child(2n+1) {
+                    background-color: #f0f0f0;
+                }
+
+                td, th {
+                    padding: .5em;
+                }
+
+                td small {
+                    color: #666;
+                }
+
+                .center {
+                    text-align: center;
+                }
+
+                .right {
+                    text-align: right;
+                }
+            </style>
+        {% endblock %}
+
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+</html>

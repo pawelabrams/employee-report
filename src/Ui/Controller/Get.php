@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Abramowicz\Tidio\Ui\Controller;
 
 use Abramowicz\Tidio\Application\GenerateReport;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class Get
+class Get extends AbstractController
 {
     /**
      * @var GenerateReport
@@ -31,18 +32,34 @@ class Get
      *     path="/"
      * )
      */
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
-        $result = ($this->useCase)([], ['lastName' => 'ASC']);
+        $filters = array_filter(
+            $request->query->all(),
+            fn ($value, $key) => in_array($key, ['firstName', 'lastName', 'department']) && !empty($value),
+            ARRAY_FILTER_USE_BOTH
+        );
 
-        array_walk($result, function (array &$row) {
+        $orderedBy = $request->query->all('_orderBy') ?: ['lastName' => 'ASC'];
+        $employees = ($this->useCase)($filters, $orderedBy);
+
+        $departments = [];
+
+        array_walk($employees, function (array &$row) use (&$departments) {
             $row['baseSalary'] = sprintf('$%.2f', $row['baseSalary'] / 100);
             $row['bonus'] = sprintf('$%.2f', $row['bonus'] / 100);
             $row['totalSalary'] = sprintf('$%.2f', $row['totalSalary'] / 100);
-            $row['department'] = $row['department']->getName();
             $row['employedSince'] = $row['employedSince'] ? $row['employedSince']->format('Y-m-d') : '-';
+
+            if (!isset($departments[$row['department']->getId()])) {
+                $departments[$row['department']->getId()] = $row['department'];
+            }
         });
 
-        return new JsonResponse($result);
+        return $this->render('report.html.twig', [
+            'employees' => $employees,
+            'departments' => $departments,
+            'orderedBy' => $orderedBy,
+        ]);
     }
 }

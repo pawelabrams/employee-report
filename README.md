@@ -28,6 +28,9 @@
 
 Use `symfony serve` to run the project. The project uses SQLite (`var/data.db`) for maximum portability – this is only for demonstration purposes.
 
+To create an empty database schema, run `bin/console doctrine:schema:create`.
+To create a database with example data, run `bin/console doctrine:migrations:migrate`.
+
 To deploy it, either docker scripts should be written or a server should be configured for deployment via other means. Using a standalone RDBMS for production deployment is recommended.
 
 The following addresses should be used to interact with the generator:

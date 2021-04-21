@@ -35,6 +35,16 @@ class GenerateReport
      */
     public function __invoke(array $criteria = [], ?array $sort = null): array
     {
+        // Inelegant; maybe find another solution?
+        if (!empty($sort)) {
+            foreach (['totalSalary', 'bonus', 'bonusType'] as $key) {
+                if (isset($sort[$key])) {
+                    $afterSort[$key] = $sort[$key];
+                    unset($sort[$key]);
+                }
+            }
+        }
+
         $employees = $this->employeeRepository->findBy($criteria, $sort ?? ['lastName' => 'ASC']);
 
         $result = [];
@@ -53,6 +63,21 @@ class GenerateReport
             }
 
             $result[] = $employeeData;
+        }
+
+        // Sort by columns unavailable in Doctrine
+        if (!empty($afterSort)) {
+            // The following will be a nice match expression in PHP 8.0
+            $sorter = function ($column, $order) {
+                switch ($order) {
+                    case 'desc': return fn ($a, $b) => $b[$column] <=> $a[$column];
+                    case 'asc': default: return fn ($a, $b) => $a[$column] <=> $b[$column];
+                }
+            };
+
+            foreach ($afterSort as $column => $order) {
+                usort($result, $sorter($column, $order));
+            }
         }
 
         return $result;
