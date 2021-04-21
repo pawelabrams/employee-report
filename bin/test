@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# TODO: This file is a stub for a larger test automation, e.g. using phing.
+
+DIR="bin" #sh and bash differ in original dirname discovery code interpretation, so it's hardcoded.
+
+echo "Clear test Database:"
+echo "---"
+
+"$DIR"/console doctrine:schema:drop --full-database --force --env=test
+"$DIR"/console doctrine:migrations:migrate --env=test -n
+
+echo "PHPUnit:"
+echo "---"
+
+"$DIR"/phpunit
+
+echo "PHP CS Fixer:"
+echo "---"
+
+$(dirname "$DIR")/vendor/bin/php-cs-fixer fix -v --dry-run --stop-on-violation --using-cache=no

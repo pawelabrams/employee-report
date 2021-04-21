@@ -1,0 +1,3 @@
+#index:
+#    path: /
+#    controller: Abramowicz\Tidio\Ui\Controller\DefaultController::index
