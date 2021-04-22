@@ -34,6 +34,7 @@ class Get extends AbstractController
      */
     public function __invoke(Request $request): Response
     {
+        // Way to improve: use a form to better control the user input
         $filters = array_filter(
             $request->query->all(),
             fn ($value, $key) => in_array($key, ['firstName', 'lastName', 'department']) && !empty($value),
@@ -42,19 +43,8 @@ class Get extends AbstractController
 
         $orderedBy = $request->query->all('_orderBy') ?: ['lastName' => 'ASC'];
         $employees = ($this->useCase)($filters, $orderedBy);
-
-        $departments = [];
-
-        array_walk($employees, function (array &$row) use (&$departments) {
-            $row['baseSalary'] = sprintf('$%.2f', $row['baseSalary'] / 100);
-            $row['bonus'] = sprintf('$%.2f', $row['bonus'] / 100);
-            $row['totalSalary'] = sprintf('$%.2f', $row['totalSalary'] / 100);
-            $row['employedSince'] = $row['employedSince'] ? $row['employedSince']->format('Y-m-d') : '-';
-
-            if (!isset($departments[$row['department']->getId()])) {
-                $departments[$row['department']->getId()] = $row['department'];
-            }
-        });
+        // Way to improve: use DepartmentRepository; this one is only for demo purposes
+        $departments = array_unique(array_column($employees, 'department'), SORT_REGULAR);
 
         return $this->render('report.html.twig', [
             'employees' => $employees,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Abramowicz\Tidio\Tests\Unit\Controller;
+namespace Abramowicz\Tidio\Tests\Unit\Application;
 
 use Abramowicz\Tidio\Application\GenerateReport;
 use Abramowicz\Tidio\Domain\Repository\EmployeeRepository;

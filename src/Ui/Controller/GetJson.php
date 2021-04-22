@@ -34,6 +34,7 @@ class GetJson
      */
     public function __invoke(Request $request): Response
     {
+        // Way to improve: use a form to better control the user input
         $filters = array_filter(
             $request->query->all(),
             fn ($value, $key) => in_array($key, ['firstName', 'lastName', 'department']) && !empty($value),
@@ -43,6 +44,7 @@ class GetJson
         $orderedBy = $request->query->all('_orderBy') ?: ['lastName' => 'ASC'];
         $employees = ($this->useCase)($filters, $orderedBy);
 
+        // Way to improve: use JMS serializer, rules and listeners to store this logic.
         array_walk($employees, function (array &$row) {
             $row['baseSalary'] /= 100;
             $row['bonus'] /= 100;

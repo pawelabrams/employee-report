@@ -61,10 +61,10 @@
                 {{ employee.department.name }}
             </td>
             <td class="right">
-                {{ employee.baseSalary }}
+                ${{ '%.2f' | format(employee.baseSalary / 100) }}
             </td>
             <td class="right">
-                {{ employee.bonus }}
+                ${{ '%.2f' | format(employee.bonus / 100) }}
             </td>
             <td>
                 {% if employee.bonusType == 'seniority' %}
@@ -76,7 +76,7 @@
                 {% endif %}
             </td>
             <td class="right">
-                {{ employee.totalSalary }}
+                ${{ '%.2f' | format(employee.totalSalary / 100) }}
             </td>
         </tr>
     {% endfor %}
